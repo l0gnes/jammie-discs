@@ -5,13 +5,13 @@ from io import BytesIO
 import cachetools
 
 from src.lib.lastfm import get_recently_played_songs
-from src.lib.images import generate_disk_frames, generate_now_playing_image
+from src.lib.images import generate_now_playing_image
 
 router = APIRouter(prefix="/images", tags=["images"])
 
 song_cache = cachetools.TTLCache(maxsize=1, ttl=10.0)
 
-@router.get("/current")
+@router.get("/tiny.gif")
 async def get_current_playing_song_image() -> StreamingResponse:
     """Generates an image and returns it"""
 
