@@ -170,10 +170,10 @@ def generate_now_playing_image(
 
     # font = ImageFont.load_default(size=16)
 
-    title_font = ImageFont.truetype("consola.ttf", size=16)
-    header_font = ImageFont.truetype("consola.ttf", size=14)
-    artist_font = ImageFont.truetype("consola.ttf", size=14)
-    jammie_discs_font = ImageFont.truetype("consola.ttf", size=12)
+    title_font = ImageFont.truetype("./src/assets/consola.ttf", size=16)
+    header_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
+    artist_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
+    jammie_discs_font = ImageFont.truetype("./src/assets/consola.ttf", size=12)
 
     frames = []
 
