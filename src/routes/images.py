@@ -52,5 +52,8 @@ async def get_current_playing_song_image() -> StreamingResponse:
 
     return StreamingResponse(
         content=out_bytes,
-        media_type="image/gif"
+        media_type="image/gif",
+        headers={
+            "cache-control" : "no-cache"
+        }
     )
