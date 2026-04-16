@@ -88,14 +88,14 @@ def generate_scrolling_text(
     
     measure_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
     measure_draw = ImageDraw.Draw(measure_image)
-    l, t, r, b = measure_draw.textbbox((0, 0), text, font=font)
+    left, top, right, bottom = measure_draw.textbbox((0, 0), text, font=font)
 
-    full_w = max(1, int(r - l))
-    full_h = max(1, int(b - t))
+    full_w = max(1, int(right - left))
+    full_h = max(1, int(bottom - top))
 
     text_image = Image.new(mode="RGBA", color=(0, 0, 0, 0), size=(full_w, full_h))
     text_image_draw = ImageDraw.Draw(text_image, mode='RGBA')
-    text_image_draw.text((-l, -t), text=text, fill=text_color, font=font)
+    text_image_draw.text((-left, -top), text=text, fill=text_color, font=font)
 
     non_waiting_frames = frame_count - (wait_time + end_wait_frames)
 
@@ -104,7 +104,7 @@ def generate_scrolling_text(
 
     for frame_no in range(frame_count):
 
-        crop_section = (0, 0, min(r, bbox_width), b)
+        crop_section = (0, 0, min(full_w, bbox_width), full_h)
 
         if frame_no > wait_time and frame_no <= (non_waiting_frames + wait_time):
             # Calculate new crop section based on frame number
@@ -114,13 +114,18 @@ def generate_scrolling_text(
 
             x_offset = distance_per_frame * (frame_no - wait_time)
 
-            crop_section = (x_offset, 0, min(r, bbox_width + x_offset), b)
+            crop_section = (
+                int(round(x_offset)),
+                0,
+                int(round(min(full_w, bbox_width + x_offset))),
+                full_h
+            )
 
         elif frame_no > (non_waiting_frames + wait_time):
             # Calculate crop at end of image
 
             x_offset = max(0, full_w - bbox_width)
-            crop_section = (x_offset, 0, r, b)
+            crop_section = (int(round(x_offset)), 0, full_w, full_h)
 
         yield text_image.crop(crop_section)
 
@@ -176,8 +181,6 @@ def generate_now_playing_image(
         color=theme["background_fill"] or (0, 0, 0, 1)
     )
 
-    # font = ImageFont.load_default(size=16)
-
     TITLE_FONT_SIZE = 16
     HEADER_FONT_SIZE = 14
     ARTIST_FONT_SIZE = 14
@@ -185,17 +188,35 @@ def generate_now_playing_image(
 
     SONG_TITLE_BOUNDING_BOX_WIDTH = 300
 
-    title_font = ImageFont.truetype("./src/assets/consola.ttf", size=16)
-    header_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
-    artist_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
-    jammie_discs_font = ImageFont.truetype("./src/assets/consola.ttf", size=12)
+    title_font = ImageFont.truetype("./src/assets/consola.ttf", size=TITLE_FONT_SIZE)
+    header_font = ImageFont.truetype("./src/assets/consola.ttf", size=HEADER_FONT_SIZE)
+    artist_font = ImageFont.truetype("./src/assets/consola.ttf", size=ARTIST_FONT_SIZE)
+    jammie_discs_font = ImageFont.truetype("./src/assets/consola.ttf", size=WATERMARK_TEXT_FONT_SIZE)
 
     GAP_MAIN_TEXT : int = 5
     LEFTMOST_SIDE_MAIN_TEXT : int = 85
 
-    full_height_of_maintext = (HEADER_FONT_SIZE + TITLE_FONT_SIZE + ARTIST_FONT_SIZE + (GAP_MAIN_TEXT * 4))
+    def get_line_height(font: ImageFont.ImageFont | ImageFont.FreeTypeFont) -> int:
+        if isinstance(font, ImageFont.FreeTypeFont):
+            ascent, descent = font.getmetrics()
+            return max(1, int(ascent + descent))
+
+        # Fallback for non-FreeType fonts.
+        left, top, right, bottom = font.getbbox("Ag")
+        return max(1, int(bottom - top))
+
+    header_line_height = get_line_height(header_font)
+    title_line_height = get_line_height(title_font)
+    artist_line_height = get_line_height(artist_font)
+
+    full_height_of_maintext = (
+        header_line_height + title_line_height + artist_line_height + (GAP_MAIN_TEXT * 2)
+    )
     remaining_height_maintext = IMAGE_HEIGHT - full_height_of_maintext
-    starting_offset_for_maintext = round(remaining_height_maintext / 2) + round(HEADER_FONT_SIZE / 2)
+    starting_offset_for_maintext = round(remaining_height_maintext / 2)
+
+    title_text_y = starting_offset_for_maintext + header_line_height + GAP_MAIN_TEXT
+    artist_text_y = title_text_y + title_line_height + GAP_MAIN_TEXT
 
     frames = []
 
@@ -206,35 +227,36 @@ def generate_now_playing_image(
             (LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext), 
             text="CURRENTLY LISTENING TO", 
             fill= theme["now_playing_text"], 
-            font = header_font
+            font = header_font,
+            anchor="lt",
         )
     else:
         base_draw.text(
             (LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext), 
             text="MOST RECENTLY PLAYED SONG", 
             fill= theme["last_played_text"], 
-            font = header_font
+            font = header_font,
+            anchor="lt",
         )
 
     base_draw.text(
         (
             LEFTMOST_SIDE_MAIN_TEXT,
-            (
-                starting_offset_for_maintext + HEADER_FONT_SIZE + TITLE_FONT_SIZE + (2 * GAP_MAIN_TEXT)
-            )
+            artist_text_y
         ),
         text = song.artist.upper(),
         font=artist_font,
-        fill= theme["artist_name_text"]
+        fill= theme["artist_name_text"],
+        anchor="lt",
     )
 
     base_draw.text(
         (base.size[0] - 2, 2),
         text="JAMMIE DISCS",
         fill = theme["jammie_discs_text"],
-        anchor="rt",
         font=jammie_discs_font,
-        spacing=4
+        spacing=4,
+        anchor="rt",
     )
 
     if theme["watermark_fp"]:
@@ -253,7 +275,7 @@ def generate_now_playing_image(
 
         # Lines enclosing main text
         base_draw.line((LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext, IMAGE_WIDTH, starting_offset_for_maintext), fill=(0, 0, 255), width=1)
-        maintext_bottom = (starting_offset_for_maintext + (2 * GAP_MAIN_TEXT) + HEADER_FONT_SIZE + TITLE_FONT_SIZE + ARTIST_FONT_SIZE)
+        maintext_bottom = (starting_offset_for_maintext + (2 * GAP_MAIN_TEXT) + header_line_height + title_line_height + artist_line_height)
         base_draw.line((LEFTMOST_SIDE_MAIN_TEXT, maintext_bottom, IMAGE_WIDTH, maintext_bottom), fill=(0, 0, 255), width=1)
 
         # Line for where title bounding box ends
@@ -279,7 +301,7 @@ def generate_now_playing_image(
         base_clone = base.copy()
 
         base_clone.alpha_composite(disk_frame, (8, 8))
-        base_clone.alpha_composite(title_label, (LEFTMOST_SIDE_MAIN_TEXT , (starting_offset_for_maintext + HEADER_FONT_SIZE + GAP_MAIN_TEXT)))
+        base_clone.alpha_composite(title_label, (LEFTMOST_SIDE_MAIN_TEXT , title_text_y))
 
         frames.append(base_clone)
 
