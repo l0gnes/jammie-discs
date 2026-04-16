@@ -162,21 +162,40 @@ def get_watermark(watermark_fp : str | PathLike) -> Image.Image:
 def generate_now_playing_image(
     frame_count: int,
     song: RecentlyPlayedSong,
-    theme: JammieTheme
+    theme: JammieTheme,
+    *,
+    debug_layer : bool = False
 ) -> list[Image.Image]:
     
+    IMAGE_WIDTH = 400
+    IMAGE_HEIGHT = 80
+
     base = Image.new(
         mode="RGBA",
-        size=(400, 80),
+        size=(IMAGE_WIDTH, IMAGE_HEIGHT),
         color=theme["background_fill"] or (0, 0, 0, 1)
     )
 
     # font = ImageFont.load_default(size=16)
 
+    TITLE_FONT_SIZE = 16
+    HEADER_FONT_SIZE = 14
+    ARTIST_FONT_SIZE = 14
+    WATERMARK_TEXT_FONT_SIZE = 12
+
+    SONG_TITLE_BOUNDING_BOX_WIDTH = 300
+
     title_font = ImageFont.truetype("./src/assets/consola.ttf", size=16)
     header_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
     artist_font = ImageFont.truetype("./src/assets/consola.ttf", size=14)
     jammie_discs_font = ImageFont.truetype("./src/assets/consola.ttf", size=12)
+
+    GAP_MAIN_TEXT : int = 5
+    LEFTMOST_SIDE_MAIN_TEXT : int = 85
+
+    full_height_of_maintext = (HEADER_FONT_SIZE + TITLE_FONT_SIZE + ARTIST_FONT_SIZE + (GAP_MAIN_TEXT * 4))
+    remaining_height_maintext = IMAGE_HEIGHT - full_height_of_maintext
+    starting_offset_for_maintext = round(remaining_height_maintext / 2) + round(HEADER_FONT_SIZE / 2)
 
     frames = []
 
@@ -184,22 +203,26 @@ def generate_now_playing_image(
 
     if song.is_now_playing:
         base_draw.text(
-            (85, 12), 
+            (LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext), 
             text="CURRENTLY LISTENING TO", 
             fill= theme["now_playing_text"], 
             font = header_font
         )
     else:
         base_draw.text(
-            (85, 12), 
+            (LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext), 
             text="MOST RECENTLY PLAYED SONG", 
             fill= theme["last_played_text"], 
             font = header_font
         )
 
-
     base_draw.text(
-        (85, 52),
+        (
+            LEFTMOST_SIDE_MAIN_TEXT,
+            (
+                starting_offset_for_maintext + HEADER_FONT_SIZE + TITLE_FONT_SIZE + (2 * GAP_MAIN_TEXT)
+            )
+        ),
         text = song.artist.upper(),
         font=artist_font,
         fill= theme["artist_name_text"]
@@ -221,6 +244,22 @@ def generate_now_playing_image(
 
         base.alpha_composite(monkey, (330, 12))
 
+    if debug_layer:
+        # Line at mid part
+        base_draw.line((0, round(IMAGE_HEIGHT / 2), IMAGE_WIDTH, round(IMAGE_HEIGHT / 2)), fill=(255, 0, 0), width=1)
+
+        # Line at leftmost
+        base_draw.line((LEFTMOST_SIDE_MAIN_TEXT, 0, LEFTMOST_SIDE_MAIN_TEXT, IMAGE_HEIGHT), fill=(0, 255, 0), width=1)
+
+        # Lines enclosing main text
+        base_draw.line((LEFTMOST_SIDE_MAIN_TEXT, starting_offset_for_maintext, IMAGE_WIDTH, starting_offset_for_maintext), fill=(0, 0, 255), width=1)
+        maintext_bottom = (starting_offset_for_maintext + (2 * GAP_MAIN_TEXT) + HEADER_FONT_SIZE + TITLE_FONT_SIZE + ARTIST_FONT_SIZE)
+        base_draw.line((LEFTMOST_SIDE_MAIN_TEXT, maintext_bottom, IMAGE_WIDTH, maintext_bottom), fill=(0, 0, 255), width=1)
+
+        # Line for where title bounding box ends
+        bbox_with_offset = LEFTMOST_SIDE_MAIN_TEXT + SONG_TITLE_BOUNDING_BOX_WIDTH
+        base_draw.line((bbox_with_offset, 0, bbox_with_offset, IMAGE_HEIGHT), fill=(225, 255, 0), width=1)
+
     for disk_frame, title_label in zip(
         generate_disk_frames(
             frame_count=frame_count, 
@@ -231,7 +270,7 @@ def generate_now_playing_image(
             frame_count=frame_count,
             text = song.title,
             font = title_font,
-            bbox_width = 300,
+            bbox_width = SONG_TITLE_BOUNDING_BOX_WIDTH,
             wait_time = 8,
             end_wait_frames = 8,
             text_color = theme["song_title_text"] # type: ignore
@@ -240,7 +279,7 @@ def generate_now_playing_image(
         base_clone = base.copy()
 
         base_clone.alpha_composite(disk_frame, (8, 8))
-        base_clone.alpha_composite(title_label, (85 , 32))
+        base_clone.alpha_composite(title_label, (LEFTMOST_SIDE_MAIN_TEXT , (starting_offset_for_maintext + HEADER_FONT_SIZE + GAP_MAIN_TEXT)))
 
         frames.append(base_clone)
 
