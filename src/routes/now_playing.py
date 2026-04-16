@@ -14,9 +14,15 @@ from src.lib.images import generate_now_playing_image
 
 router = APIRouter(prefix="/now_playing", tags=["images"])
 
-# FIXME !!!!!
-# TODO: This probably wont work with more than one mf user 
-song_cache = cachetools.TTLCache(maxsize=1, ttl=10.0)
+SONG_CACHE : dict[str, cachetools.TTLCache] = {}
+
+def get_song_cache_for_user(user : str) -> cachetools.TTLCache:
+    global SONG_CACHE
+
+    if user not in SONG_CACHE:
+        SONG_CACHE[user] = cachetools.TTLCache(maxsize=1, ttl=10.0)
+
+    return SONG_CACHE[user]
 
 class NowPlayingQueryParams(BaseModel):
     theme: str | None = None
@@ -39,7 +45,7 @@ async def get_current_playing_song_image(
 
     theme = THEMES[params.theme or config.default_theme]
 
-    global song_cache
+    song_cache = get_song_cache_for_user(user=username)
 
     cached_song = song_cache.get("song")
 
