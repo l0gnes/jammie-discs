@@ -1,0 +1,224 @@
+from typing import Any, TypedDict
+from os import PathLike
+
+INK_TYPE = float | tuple[int, ...] | str
+
+class Theme(TypedDict):
+    background_fill : INK_TYPE | None
+    now_playing_text : INK_TYPE
+    last_played_text : INK_TYPE
+    song_title_text : INK_TYPE
+    artist_name_text : INK_TYPE
+
+    jammie_discs_text : INK_TYPE
+    watermark_fp : str | PathLike | None
+
+THEMES = {
+    "dark" : Theme(
+        background_fill = (20, 20, 20),
+        now_playing_text = (0, 255, 0),
+        last_played_text = (250, 128, 114),
+        song_title_text = (255, 255, 255),
+        artist_name_text = (180, 180, 180),
+        jammie_discs_text = (80, 80, 80),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "light" : Theme(
+        background_fill = (248, 248, 245),
+        now_playing_text = (34, 139, 34),
+        last_played_text = (205, 92, 92),
+        song_title_text = (28, 28, 28),
+        artist_name_text = (96, 96, 96),
+        jammie_discs_text = (150, 150, 150),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "nord" : Theme(
+        background_fill = (46, 52, 64),
+        now_playing_text = (136, 192, 208),
+        last_played_text = (191, 97, 106),
+        song_title_text = (236, 239, 244),
+        artist_name_text = (216, 222, 233),
+        jammie_discs_text = (76, 86, 106),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "nord-light" : Theme(
+        background_fill = (236, 239, 244),
+        now_playing_text = (94, 129, 172),
+        last_played_text = (191, 97, 106),
+        song_title_text = (46, 52, 64),
+        artist_name_text = (67, 76, 94),
+        jammie_discs_text = (129, 161, 193),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "gruvbox" : Theme(
+        background_fill = (40, 40, 40),
+        now_playing_text = (250, 189, 47),
+        last_played_text = (250, 96, 64),
+        song_title_text = (235, 219, 178),
+        artist_name_text = (184, 187, 38),
+        jammie_discs_text = (146, 131, 116),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "gruvbox-light" : Theme(
+        background_fill = (251, 241, 199),
+        now_playing_text = (69, 133, 136),
+        last_played_text = (157, 0, 6),
+        song_title_text = (60, 56, 54),
+        artist_name_text = (175, 58, 3),
+        jammie_discs_text = (147, 161, 161),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "dracula" : Theme(
+        background_fill = (40, 42, 54),
+        now_playing_text = (189, 147, 249),
+        last_played_text = (255, 85, 85),
+        song_title_text = (248, 248, 242),
+        artist_name_text = (139, 233, 253),
+        jammie_discs_text = (98, 114, 164),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "catppuccin" : Theme(
+        background_fill = (30, 30, 46),
+        now_playing_text = (137, 220, 235),
+        last_played_text = (243, 139, 168),
+        song_title_text = (205, 214, 244),
+        artist_name_text = (180, 190, 254),
+        jammie_discs_text = (116, 199, 236),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "catppuccin-latte" : Theme(
+        background_fill = (239, 241, 245),
+        now_playing_text = (4, 165, 229),
+        last_played_text = (210, 15, 57),
+        song_title_text = (76, 79, 105),
+        artist_name_text = (136, 57, 239),
+        jammie_discs_text = (156, 160, 176),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "catppuccin-frappe" : Theme(
+        background_fill = (48, 52, 70),
+        now_playing_text = (137, 180, 250),
+        last_played_text = (231, 130, 132),
+        song_title_text = (198, 208, 245),
+        artist_name_text = (202, 158, 230),
+        jammie_discs_text = (108, 112, 134),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "catppuccin-macchiato" : Theme(
+        background_fill = (30, 32, 48),
+        now_playing_text = (138, 173, 244),
+        last_played_text = (237, 135, 150),
+        song_title_text = (202, 211, 245),
+        artist_name_text = (198, 160, 246),
+        jammie_discs_text = (110, 115, 141),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "catppuccin-mocha" : Theme(
+        background_fill = (30, 30, 46),
+        now_playing_text = (137, 220, 235),
+        last_played_text = (243, 139, 168),
+        song_title_text = (205, 214, 244),
+        artist_name_text = (180, 190, 254),
+        jammie_discs_text = (116, 199, 236),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "solarized-dark" : Theme(
+        background_fill = (0, 43, 54),
+        now_playing_text = (38, 139, 210),
+        last_played_text = (220, 50, 47),
+        song_title_text = (253, 246, 227),
+        artist_name_text = (181, 137, 0),
+        jammie_discs_text = (88, 110, 117),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "solarized-light" : Theme(
+        background_fill = (253, 246, 227),
+        now_playing_text = (38, 139, 210),
+        last_played_text = (203, 75, 22),
+        song_title_text = (7, 54, 66),
+        artist_name_text = (88, 110, 117),
+        jammie_discs_text = (131, 148, 150),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "tokyo-night" : Theme(
+        background_fill = (26, 27, 38),
+        now_playing_text = (125, 207, 255),
+        last_played_text = (247, 118, 142),
+        song_title_text = (192, 202, 245),
+        artist_name_text = (158, 206, 106),
+        jammie_discs_text = (86, 95, 137),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "onedark" : Theme(
+        background_fill = (40, 44, 52),
+        now_playing_text = (97, 175, 239),
+        last_played_text = (224, 108, 117),
+        song_title_text = (171, 178, 191),
+        artist_name_text = (198, 120, 221),
+        jammie_discs_text = (92, 99, 112),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "monokai" : Theme(
+        background_fill = (39, 40, 34),
+        now_playing_text = (102, 217, 239),
+        last_played_text = (249, 38, 114),
+        song_title_text = (248, 248, 242),
+        artist_name_text = (166, 226, 46),
+        jammie_discs_text = (117, 113, 94),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "ayu-mirage" : Theme(
+        background_fill = (21, 27, 38),
+        now_playing_text = (255, 173, 51),
+        last_played_text = (246, 113, 113),
+        song_title_text = (234, 234, 234),
+        artist_name_text = (92, 207, 230),
+        jammie_discs_text = (87, 96, 117),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "rose-pine" : Theme(
+        background_fill = (25, 23, 36),
+        now_playing_text = (235, 188, 186),
+        last_played_text = (235, 111, 146),
+        song_title_text = (224, 222, 244),
+        artist_name_text = (196, 167, 231),
+        jammie_discs_text = (86, 83, 111),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "rose-pine-moon" : Theme(
+        background_fill = (35, 33, 54),
+        now_playing_text = (235, 188, 186),
+        last_played_text = (235, 111, 146),
+        song_title_text = (224, 222, 244),
+        artist_name_text = (196, 167, 231),
+        jammie_discs_text = (86, 83, 111),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "everforest" : Theme(
+        background_fill = (47, 60, 48),
+        now_playing_text = (131, 192, 132),
+        last_played_text = (220, 103, 86),
+        song_title_text = (211, 215, 207),
+        artist_name_text = (223, 190, 149),
+        jammie_discs_text = (117, 129, 116),
+        watermark_fp = "./src/assets/monkey-light.png"
+    ),
+    "github-light" : Theme(
+        background_fill = (246, 248, 250),
+        now_playing_text = (9, 105, 218),
+        last_played_text = (207, 34, 46),
+        song_title_text = (31, 35, 40),
+        artist_name_text = (87, 96, 106),
+        jammie_discs_text = (175, 184, 193),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    ),
+    "rose-pine-dawn" : Theme(
+        background_fill = (250, 244, 237),
+        now_playing_text = (180, 99, 122),
+        last_played_text = (156, 105, 62),
+        song_title_text = (87, 79, 91),
+        artist_name_text = (86, 148, 159),
+        jammie_discs_text = (144, 140, 170),
+        watermark_fp = "./src/assets/monkey-dark.png"
+    )
+}

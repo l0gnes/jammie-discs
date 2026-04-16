@@ -1,9 +1,11 @@
+from os import PathLike
 from typing import Iterable
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 import requests
 from io import BytesIO
 
 from src.lib.lastfm import RecentlyPlayedSong
+from src.lib.themes import Theme as JammieTheme
 
 def get_disk_mask(
     image_size: tuple[int, int],
@@ -144,9 +146,9 @@ def generate_title_label(
 
         yield text_image
 
-def get_monkey() -> Image.Image:
+def get_watermark(watermark_fp : str | PathLike) -> Image.Image:
 
-    monkey_image = Image.open("./src/assets/monkey.png").convert(mode="RGBA")
+    monkey_image = Image.open(watermark_fp).convert(mode="RGBA")
 
     r,g,b,a = monkey_image.split()
 
@@ -159,13 +161,14 @@ def get_monkey() -> Image.Image:
 
 def generate_now_playing_image(
     frame_count: int,
-    song: RecentlyPlayedSong
+    song: RecentlyPlayedSong,
+    theme: JammieTheme
 ) -> list[Image.Image]:
     
     base = Image.new(
         mode="RGBA",
         size=(400, 80),
-        color=(20, 20, 20)
+        color=theme["background_fill"] or (0, 0, 0, 1)
     )
 
     # font = ImageFont.load_default(size=16)
@@ -183,14 +186,14 @@ def generate_now_playing_image(
         base_draw.text(
             (85, 12), 
             text="CURRENTLY LISTENING TO", 
-            fill=(0, 255, 0), 
+            fill= theme["now_playing_text"], 
             font = header_font
         )
     else:
         base_draw.text(
             (85, 12), 
             text="MOST RECENTLY PLAYED SONG", 
-            fill=(250, 128, 114), 
+            fill= theme["last_played_text"], 
             font = header_font
         )
 
@@ -199,21 +202,24 @@ def generate_now_playing_image(
         (85, 52),
         text = song.artist.upper(),
         font=artist_font,
-        fill=(180, 180, 180)
+        fill= theme["artist_name_text"]
     )
 
     base_draw.text(
         (base.size[0] - 2, 2),
         text="JAMMIE DISCS",
-        fill = (80, 80, 80),
+        fill = theme["jammie_discs_text"],
         anchor="rt",
         font=jammie_discs_font,
         spacing=4
     )
 
-    monkey = get_monkey()
+    if theme["watermark_fp"]:
+        monkey = get_watermark(
+            watermark_fp = theme["watermark_fp"]
+        )
 
-    base.alpha_composite(monkey, (330, 12))
+        base.alpha_composite(monkey, (330, 12))
 
     for disk_frame, title_label in zip(
         generate_disk_frames(
@@ -227,7 +233,8 @@ def generate_now_playing_image(
             font = title_font,
             bbox_width = 300,
             wait_time = 8,
-            end_wait_frames = 8
+            end_wait_frames = 8,
+            text_color = theme["song_title_text"] # type: ignore
         )
     ):
         base_clone = base.copy()
