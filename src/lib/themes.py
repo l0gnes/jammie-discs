@@ -1,5 +1,4 @@
 from typing import Any, TypedDict
-from os import PathLike
 
 INK_TYPE = float | tuple[int, ...] | str
 
@@ -11,7 +10,13 @@ class Theme(TypedDict):
     artist_name_text : INK_TYPE
 
     jammie_discs_text : INK_TYPE
-    watermark_fp : str | PathLike | None
+    watermark : str | None
+
+WATERMARKS = {
+    "monkey-light" : ("./src/assets/monkey-light.png", 15),
+    "monkey-dark" : ("./src/assets/monkey-dark.png", 50),
+    "pillbug" : ("./src/assets/pillbug.png", 150)
+}
 
 THEMES = {
     "dark" : Theme(
@@ -21,7 +26,7 @@ THEMES = {
         song_title_text = (255, 255, 255),
         artist_name_text = (180, 180, 180),
         jammie_discs_text = (80, 80, 80),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "light" : Theme(
         background_fill = (248, 248, 245),
@@ -30,7 +35,7 @@ THEMES = {
         song_title_text = (28, 28, 28),
         artist_name_text = (96, 96, 96),
         jammie_discs_text = (150, 150, 150),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "nord" : Theme(
         background_fill = (46, 52, 64),
@@ -39,7 +44,7 @@ THEMES = {
         song_title_text = (236, 239, 244),
         artist_name_text = (216, 222, 233),
         jammie_discs_text = (76, 86, 106),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "nord-light" : Theme(
         background_fill = (236, 239, 244),
@@ -48,7 +53,7 @@ THEMES = {
         song_title_text = (46, 52, 64),
         artist_name_text = (67, 76, 94),
         jammie_discs_text = (129, 161, 193),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "gruvbox" : Theme(
         background_fill = (40, 40, 40),
@@ -57,7 +62,7 @@ THEMES = {
         song_title_text = (235, 219, 178),
         artist_name_text = (184, 187, 38),
         jammie_discs_text = (146, 131, 116),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "gruvbox-light" : Theme(
         background_fill = (251, 241, 199),
@@ -66,7 +71,7 @@ THEMES = {
         song_title_text = (60, 56, 54),
         artist_name_text = (175, 58, 3),
         jammie_discs_text = (147, 161, 161),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "dracula" : Theme(
         background_fill = (40, 42, 54),
@@ -75,7 +80,7 @@ THEMES = {
         song_title_text = (248, 248, 242),
         artist_name_text = (139, 233, 253),
         jammie_discs_text = (98, 114, 164),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "catppuccin" : Theme(
         background_fill = (30, 30, 46),
@@ -84,7 +89,7 @@ THEMES = {
         song_title_text = (205, 214, 244),
         artist_name_text = (180, 190, 254),
         jammie_discs_text = (116, 199, 236),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "catppuccin-latte" : Theme(
         background_fill = (239, 241, 245),
@@ -93,7 +98,7 @@ THEMES = {
         song_title_text = (76, 79, 105),
         artist_name_text = (136, 57, 239),
         jammie_discs_text = (156, 160, 176),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "catppuccin-frappe" : Theme(
         background_fill = (48, 52, 70),
@@ -102,7 +107,7 @@ THEMES = {
         song_title_text = (198, 208, 245),
         artist_name_text = (202, 158, 230),
         jammie_discs_text = (108, 112, 134),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "catppuccin-macchiato" : Theme(
         background_fill = (30, 32, 48),
@@ -111,7 +116,7 @@ THEMES = {
         song_title_text = (202, 211, 245),
         artist_name_text = (198, 160, 246),
         jammie_discs_text = (110, 115, 141),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "catppuccin-mocha" : Theme(
         background_fill = (30, 30, 46),
@@ -120,7 +125,7 @@ THEMES = {
         song_title_text = (205, 214, 244),
         artist_name_text = (180, 190, 254),
         jammie_discs_text = (116, 199, 236),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "solarized-dark" : Theme(
         background_fill = (0, 43, 54),
@@ -129,7 +134,7 @@ THEMES = {
         song_title_text = (253, 246, 227),
         artist_name_text = (181, 137, 0),
         jammie_discs_text = (88, 110, 117),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "solarized-light" : Theme(
         background_fill = (253, 246, 227),
@@ -138,7 +143,7 @@ THEMES = {
         song_title_text = (7, 54, 66),
         artist_name_text = (88, 110, 117),
         jammie_discs_text = (131, 148, 150),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "tokyo-night" : Theme(
         background_fill = (26, 27, 38),
@@ -147,7 +152,7 @@ THEMES = {
         song_title_text = (192, 202, 245),
         artist_name_text = (158, 206, 106),
         jammie_discs_text = (86, 95, 137),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "onedark" : Theme(
         background_fill = (40, 44, 52),
@@ -156,7 +161,7 @@ THEMES = {
         song_title_text = (171, 178, 191),
         artist_name_text = (198, 120, 221),
         jammie_discs_text = (92, 99, 112),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "monokai" : Theme(
         background_fill = (39, 40, 34),
@@ -165,7 +170,7 @@ THEMES = {
         song_title_text = (248, 248, 242),
         artist_name_text = (166, 226, 46),
         jammie_discs_text = (117, 113, 94),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "ayu-mirage" : Theme(
         background_fill = (21, 27, 38),
@@ -174,7 +179,7 @@ THEMES = {
         song_title_text = (234, 234, 234),
         artist_name_text = (92, 207, 230),
         jammie_discs_text = (87, 96, 117),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "rose-pine" : Theme(
         background_fill = (25, 23, 36),
@@ -183,7 +188,7 @@ THEMES = {
         song_title_text = (224, 222, 244),
         artist_name_text = (196, 167, 231),
         jammie_discs_text = (86, 83, 111),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "rose-pine-moon" : Theme(
         background_fill = (35, 33, 54),
@@ -192,7 +197,7 @@ THEMES = {
         song_title_text = (224, 222, 244),
         artist_name_text = (196, 167, 231),
         jammie_discs_text = (86, 83, 111),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "everforest" : Theme(
         background_fill = (47, 60, 48),
@@ -201,7 +206,7 @@ THEMES = {
         song_title_text = (211, 215, 207),
         artist_name_text = (223, 190, 149),
         jammie_discs_text = (117, 129, 116),
-        watermark_fp = "./src/assets/monkey-light.png"
+        watermark = "monkey-light",
     ),
     "github-light" : Theme(
         background_fill = (246, 248, 250),
@@ -210,7 +215,7 @@ THEMES = {
         song_title_text = (31, 35, 40),
         artist_name_text = (87, 96, 106),
         jammie_discs_text = (175, 184, 193),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     ),
     "rose-pine-dawn" : Theme(
         background_fill = (250, 244, 237),
@@ -219,6 +224,6 @@ THEMES = {
         song_title_text = (87, 79, 91),
         artist_name_text = (86, 148, 159),
         jammie_discs_text = (144, 140, 170),
-        watermark_fp = "./src/assets/monkey-dark.png"
+        watermark = "monkey-dark",
     )
 }

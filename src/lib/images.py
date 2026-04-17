@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 
 from src.lib.lastfm import RecentlyPlayedSong
-from src.lib.themes import Theme as JammieTheme
+from src.lib.themes import Theme as JammieTheme, WATERMARKS
 
 def get_disk_mask(
     image_size: tuple[int, int],
@@ -151,25 +151,35 @@ def generate_title_label(
 
         yield text_image
 
-def get_watermark(watermark_fp : str | PathLike) -> Image.Image:
+def get_watermark(
+    watermark_name : str, 
+    *, 
+    alpha_override : int | None = None
+) -> Image.Image:
 
-    monkey_image = Image.open(watermark_fp).convert(mode="RGBA")
+    watermark_fp, watermark_alpha = WATERMARKS[watermark_name]
 
-    r,g,b,a = monkey_image.split()
+    watermark_image = Image.open(watermark_fp).convert(mode="RGBA")
 
-    new_alpha = a.point(lambda p: 15)
+    watermark_image.thumbnail((64, 64), resample=Image.Resampling.BILINEAR)
 
-    monkey_image.putalpha(new_alpha)
+    r,g,b,a = watermark_image.split()
 
-    return monkey_image
-    
+    # If the pre-existing pixel value is 0 (transparent) then dont force an alpha change
+    new_alpha = a.point(lambda p: (alpha_override or watermark_alpha) if p != 0 else p)
+
+    watermark_image.putalpha(new_alpha)
+
+    return watermark_image
+
 
 def generate_now_playing_image(
     frame_count: int,
     song: RecentlyPlayedSong,
     theme: JammieTheme,
     *,
-    debug_layer : bool = False
+    debug_layer : bool = False,
+    watermark_override : str | None = None
 ) -> list[Image.Image]:
     
     IMAGE_WIDTH = 400
@@ -259,12 +269,12 @@ def generate_now_playing_image(
         anchor="rt",
     )
 
-    if theme["watermark_fp"]:
-        monkey = get_watermark(
-            watermark_fp = theme["watermark_fp"]
+    if theme["watermark"]:
+        watermark = get_watermark(
+            watermark_name = watermark_override or theme["watermark"],
         )
 
-        base.alpha_composite(monkey, (330, 12))
+        base.paste(watermark, (330, 12), mask=watermark)
 
     if debug_layer:
         # Line at mid part

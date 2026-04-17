@@ -26,6 +26,7 @@ def get_song_cache_for_user(user : str) -> cachetools.TTLCache:
 
 class NowPlayingQueryParams(BaseModel):
     theme: str | None = None
+    watermark_override : str | None = None
 
 @router.get("/{username}.gif", operation_id="now_playing")
 async def get_current_playing_song_image(
@@ -58,7 +59,8 @@ async def get_current_playing_song_image(
     disk_frames = generate_now_playing_image(
         frame_count = 32,
         song = cached_song,
-        theme = theme
+        theme = theme,
+        watermark_override = params.watermark_override
     )
 
     out_bytes = BytesIO()
